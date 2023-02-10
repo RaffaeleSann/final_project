@@ -1,0 +1,1 @@
+The aim of this project is to use Particle Swarm Optimization for the fine-tuning of the hyper parameter of a CNN.
