@@ -49,12 +49,12 @@ class Particle:
             raise Exception('You must specify a valid type for w')
 
         # w > min_w guarantees convergent particle trajectories. If this condition is not satisfied, divergent or cyclic behavior may occur.
-        if w < min_w:
+        if (w < min_w).any:
             w = min_w
         return w
 
 
-    def VelocityCalculator(self, c1, c2, best_glob_pos, w = 0.9, v_max = None):
+    def VelocityCalculator(self, c1, c2, best_glob_pos, w_schedule, w = 0.9, v_max = None):
 
         random_1 = np.random.random(len(self.position))
         random_2 = np.random.random(len(self.position))
@@ -77,7 +77,7 @@ class Particle:
             self.velocity = velocity
         
         #let's update w
-        w = self.inertia_coefficient(c1, c2, random_1, random_2, old_w = w, schedule_type = 'nonlinearly decreasing')
+        w = self.inertia_coefficient(c1, c2, random_1, random_2, old_w = w, schedule_type = w_schedule)
 
         return self
 
