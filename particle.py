@@ -81,12 +81,45 @@ class Particle:
 
         return self
 
+    def BoundaryConstraints(self, lower_bound, upper_bound, scheme = 'reflecting'):
+        '''This function calculates the new position of a particle when the actual position is outside the boundary.
+        Three main scheme are take in account: 
+        1) random:  if a particle flies outside of the boundary of a parameter, a random value drawn from a uniform distribution between the lower and upper boundaries of the parameter is assigned.
+        2) absorbing: a particle flying outside of a parameter’s boundary is relocated at the boundary in that dimension.
+        3) reflecting: when a particle flies outside of a boundary of a parameter, the boundary acts like a mirror and reflects the projection of the particle’s displacement'''
+
+        new_position = []
+
+        # we iterate for each component of the position
+        for dim, lower, upper in zip(self.position, lower_bound, upper_bound):
+            
+            while ((dim < lower) or (dim > upper)): #check if in that dimension the position component is outside of the boundary
+
+                if scheme == 'random':
+                    dim = np.random.uniform(lower, upper)
+
+                elif scheme == 'absorbing':
+                    if dim < lower:
+                        dim = lower
+                    else:
+                        dim = upper
+                
+                elif scheme == 'reflecting':
+                    if dim < lower:
+                        dim = (lower - dim) + lower
+                    else:
+                        dim = upper - (dim-upper)
+                
+            new_position.append(dim)
+        self.position = np.array(new_position)
+
 
     def PositionCalculator(self, new_vel):
         
         self.iteration += 1
 
         self.position = self.position + new_vel
+        
         return self
 
     def BestLocal(self, problem):
