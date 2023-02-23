@@ -13,15 +13,27 @@ class Particle:
 
 
     def FitnessCalculator(self, position, accuracy):
-        '''It takes as input the model and the parameter (which isthe particle position).
-         Calculates the accuracy (or loss, we need to decide) of the model and return it. '''
-
-        # Ho messo model.accuracy, poi quando definiamo il modello credo qui vada messa la parte proprio del training per ritornare poi l'accuracy o la loss in base a come vogliamo fare noi.
+        '''Computes the fitness related to a specific position, update 
+           the particle fitness with it and returns it.
+           position: position of the particle. It must be a numpy array made with floats.
+           accuracy: function that computes the fitness of a particle. It takes position 
+           as argument and returns the relative fitness (a float value)'''
 
         self.fitness = accuracy(position)
         return self
+    
 
-    def inertia_coefficient(self, c1, c2, random_1, random_2, max_iter = None, old_w = None, schedule_type = 'constant'):
+    def InertiaCoefficient(self, c1, c2, random_1, random_2, max_iter = None, old_w = None, schedule_type = 'constant'):
+        '''Computes the inertia coefficient (typically named w), necessary
+           for updating the particle velocity.
+           c1: positive costant value. Float type
+           c2: positive constant value. Float type
+           random_1: random float value
+           random_2: random float value
+           max_iter: (Optional) maximum number of iteration. Integer type
+           old_w: old inertia coefficient value
+           schedule_type: strategy you want to use to compute the inertia coefficient in PSO.
+                          It can be <<constant>>, <<random>>, <<linearly decreasing>>'''
         
         min_w = (c1+c2)*(1/2)-1
         
@@ -55,6 +67,14 @@ class Particle:
 
 
     def VelocityCalculator(self, c1, c2, best_glob_pos, w_schedule, w = 0.9, v_max = None):
+        '''Computes and update the particle velocity
+           c1: positive costant value. Float type
+           c2: positive constant value. Float type
+           best_glob_pos: numpy array
+           w_schedule: strategy you want to use to compute the inertia coefficient in PSO.
+                       String object
+           w:
+           v_max:'''
 
         random_1 = np.random.random(len(self.position))
         random_2 = np.random.random(len(self.position))
@@ -77,7 +97,7 @@ class Particle:
             self.velocity = velocity
         
         #let's update w
-        w = self.inertia_coefficient(c1, c2, random_1, random_2, old_w = w, schedule_type = w_schedule)
+        w = self.InertiaCoefficient(c1, c2, random_1, random_2, old_w = w, schedule_type = w_schedule)
 
         return self
 
