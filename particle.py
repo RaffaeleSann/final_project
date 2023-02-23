@@ -49,7 +49,7 @@ class Particle:
             raise Exception('You must specify a valid type for w')
 
         # w > min_w guarantees convergent particle trajectories. If this condition is not satisfied, divergent or cyclic behavior may occur.
-        if (w < min_w).any:
+        if w < min_w:
             w = min_w
         return w
 
