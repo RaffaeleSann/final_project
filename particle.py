@@ -114,12 +114,22 @@ class Particle:
         self.position = np.array(new_position)
 
 
-    def PositionCalculator(self, new_vel):
+    def PositionCalculator(self, lower_bound, upper_bound, evaluation_funct, problem_type):
         
         self.iteration += 1
 
-        self.position = self.position + new_vel
+        # First we calculate the new position
+        self.position = self.position + self.velocity
+
+        #Then we check if the new_position is inside the boundaries
+        self.BoundaryConstraints(lower_bound, upper_bound)
         
+        # We need to calculate the fitness function for the new position
+        self.FitnessCalculator(self.position, evaluation_funct)
+
+        # With the new position calculated we have to update the local best position:
+        self.BestLocal(problem = problem_type)
+
         return self
 
     def BestLocal(self, problem):
