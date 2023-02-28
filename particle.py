@@ -1,5 +1,3 @@
-import numpy as np
-
 class Particle:
 
     def __init__(self, position, velocity ):
@@ -17,12 +15,13 @@ class Particle:
          Calculates the accuracy (or loss, we need to decide) of the model and return it. '''
 
         # Ho messo model.accuracy, poi quando definiamo il modello credo qui vada messa la parte proprio del training per ritornare poi l'accuracy o la loss in base a come vogliamo fare noi.
-
+        
         self.fitness = accuracy(position)
         return self
 
     def inertia_coefficient(self, c1, c2, random_1, random_2, max_iter = None, old_w = None, schedule_type = 'constant'):
-        
+        import numpy as np
+
         min_w = (c1+c2)*(1/2)-1
         
         if schedule_type == 'costant':
@@ -49,13 +48,13 @@ class Particle:
             raise Exception('You must specify a valid type for w')
 
         # w > min_w guarantees convergent particle trajectories. If this condition is not satisfied, divergent or cyclic behavior may occur.
-        if (w < min_w).any:
+        if w < min_w:
             w = min_w
         return w
 
 
     def VelocityCalculator(self, c1, c2, best_glob_pos, w_schedule, w = 0.9, v_max = None):
-
+        import numpy as np
         random_1 = np.random.random(len(self.position))
         random_2 = np.random.random(len(self.position))
 
@@ -87,6 +86,8 @@ class Particle:
         1) random:  if a particle flies outside of the boundary of a parameter, a random value drawn from a uniform distribution between the lower and upper boundaries of the parameter is assigned.
         2) absorbing: a particle flying outside of a parameter’s boundary is relocated at the boundary in that dimension.
         3) reflecting: when a particle flies outside of a boundary of a parameter, the boundary acts like a mirror and reflects the projection of the particle’s displacement'''
+        
+        import numpy as np
 
         new_position = []
 
@@ -113,15 +114,6 @@ class Particle:
             new_position.append(dim)
         self.position = np.array(new_position)
 
-
-    def PositionCalculator(self, new_vel):
-        
-        self.iteration += 1
-
-        self.position = self.position + new_vel
-        
-        return self
-
     def BestLocal(self, problem):
         '''Takes as input the particle and the type of optimization problem (problem could be minimum or maximum) and calculates best fitness and best position'''
         if self.iteration == 0:
@@ -137,4 +129,22 @@ class Particle:
                 self.bestp = self.position
         else:
             return "Error! problem must be: 'minimum' or 'maximum'"    
+        return self
+
+    def PositionCalculator(self, lower_bound, upper_bound, evaluation_funct, problem_type):
+        
+        self.iteration += 1
+
+        # First we calculate the new position
+        self.position = self.position + self.velocity
+
+        #Then we check if the new_position is inside the boundaries
+        self.BoundaryConstraints(lower_bound, upper_bound)
+        
+        # We need to calculate the fitness function for the new position
+        self.FitnessCalculator(self.position, evaluation_funct)
+
+        # With the new position calculated we have to update the local best position:
+        self.BestLocal(problem_type)
+
         return self
