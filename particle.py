@@ -1,5 +1,3 @@
-import numpy as np
-
 class Particle:
 
     def __init__(self, position, velocity ):
@@ -17,12 +15,13 @@ class Particle:
          Calculates the accuracy (or loss, we need to decide) of the model and return it. '''
 
         # Ho messo model.accuracy, poi quando definiamo il modello credo qui vada messa la parte proprio del training per ritornare poi l'accuracy o la loss in base a come vogliamo fare noi.
-
+        
         self.fitness = accuracy(position)
         return self
 
     def inertia_coefficient(self, c1, c2, random_1, random_2, max_iter = None, old_w = None, schedule_type = 'constant'):
-        
+        import numpy as np
+
         min_w = (c1+c2)*(1/2)-1
         
         if schedule_type == 'costant':
@@ -55,7 +54,7 @@ class Particle:
 
 
     def VelocityCalculator(self, c1, c2, best_glob_pos, w_schedule, w = 0.9, v_max = None):
-
+        import numpy as np
         random_1 = np.random.random(len(self.position))
         random_2 = np.random.random(len(self.position))
 
@@ -87,6 +86,8 @@ class Particle:
         1) random:  if a particle flies outside of the boundary of a parameter, a random value drawn from a uniform distribution between the lower and upper boundaries of the parameter is assigned.
         2) absorbing: a particle flying outside of a parameter’s boundary is relocated at the boundary in that dimension.
         3) reflecting: when a particle flies outside of a boundary of a parameter, the boundary acts like a mirror and reflects the projection of the particle’s displacement'''
+        
+        import numpy as np
 
         new_position = []
 
