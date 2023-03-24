@@ -14,8 +14,6 @@ class Particle:
         '''It takes as input the model and the parameter (which isthe particle position).
          Calculates the accuracy (or loss, we need to decide) of the model and return it. '''
 
-        # Ho messo model.accuracy, poi quando definiamo il modello credo qui vada messa la parte proprio del training per ritornare poi l'accuracy o la loss in base a come vogliamo fare noi.
-        
         self.fitness = accuracy(position)
         return self
 
