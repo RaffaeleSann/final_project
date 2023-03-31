@@ -1,3 +1,5 @@
+import numpy as np
+
 class Particle:
 
     def __init__(self, position, velocity ):
@@ -11,14 +13,23 @@ class Particle:
 
 
     def FitnessCalculator(self, position, accuracy):
-        '''It takes as input the model and the parameter (which isthe particle position).
-         Calculates the accuracy (or loss, we need to decide) of the model and return it. '''
+        '''Computes the fitness related to a specific position, update the particle fitness with it and returns it.
+           position: position of the particle. It must be a numpy array made with floats.
+           accuracy: function that computes the fitness of a particle. It takes position as argument and returns the relative fitness (a float value)'''
 
         self.fitness = accuracy(position)
         return self
 
     def inertia_coefficient(self, c1, c2, random_1, random_2, max_iter = None, old_w = None, schedule_type = 'constant'):
-        import numpy as np
+        '''Computes the inertia coefficient (typically named w), necessary for updating the particle velocity.
+           c1: positive costant value. Float type
+           c2: positive constant value. Float type
+           random_1: random float value
+           random_2: random float value
+           max_iter: (Optional) maximum number of iteration. Integer type
+           old_w: old inertia coefficient value
+           schedule_type: strategy you want to use to compute the inertia coefficient in PSO.
+           It can be <<constant>>, <<random>>, <<linearly decreasing>>'''
 
         min_w = (c1+c2)*(1/2)-1
         
@@ -52,7 +63,15 @@ class Particle:
 
 
     def VelocityCalculator(self, c1, c2, best_glob_pos, w_schedule, w = 0.9, v_max = None):
-        import numpy as np
+        '''Computes and update the particle velocity.
+           c1: positive costant value. Float type
+           c2: positive constant value. Float type
+           best_glob_pos: numpy array
+           w_schedule: strategy you want to use to compute the inertia coefficient in PSO.
+                       String object
+           w: positive constant value. Float type (is the starting value for w)
+           v_max: vector (each element is the maximum velocity for that dimension)'''
+
         random_1 = np.random.random(len(self.position))
         random_2 = np.random.random(len(self.position))
 
@@ -85,8 +104,6 @@ class Particle:
         2) absorbing: a particle flying outside of a parameter’s boundary is relocated at the boundary in that dimension.
         3) reflecting: when a particle flies outside of a boundary of a parameter, the boundary acts like a mirror and reflects the projection of the particle’s displacement'''
         
-        import numpy as np
-
         new_position = []
 
         # we iterate for each component of the position
@@ -130,6 +147,12 @@ class Particle:
         return self
 
     def PositionCalculator(self, lower_bound, upper_bound, evaluation_funct, problem_type):
+        '''Calculates the new position and the relative fitness and in case update the new best local position.
+
+        lower_bound: is a vector in which the i-th element is the lower bound of the position for the i-th dimension
+        upper_bound: is a vector in which the i-th element is the upper bound of the position for the i-th dimension
+        evaluation_funct: is the function used for evaluating the goodness of the position
+        problem_type: can be 'minimum' or 'maximum'.'''
         
         self.iteration += 1
 
